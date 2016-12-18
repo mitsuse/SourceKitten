@@ -40,15 +40,19 @@ struct CompleteCommand: CommandProtocol {
 
     func run(_ options: Options) -> Result<(), SourceKittenError> {
         let path: String
-        let contents: String
         if !options.file.isEmpty {
             path = options.file.bridge().absolutePathRepresentation()
+        } else {
+            path = "\(NSUUID().uuidString).swift"
+        }
+
+        let contents: String
+        if options.text.isEmpty {
             guard let file = File(path: path) else {
                 return .failure(.readFailed(path: options.file))
             }
             contents = file.contents
         } else {
-            path = "\(NSUUID().uuidString).swift"
             contents = options.text
         }
 
